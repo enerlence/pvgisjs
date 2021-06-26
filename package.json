@@ -1,0 +1,8 @@
+{
+  "name": "pvgisjs",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/enerlence/pvgisjs.git",
+  "author": "psanchez <psanchez@soincon.esm>",
+  "license": "MIT"
+}
