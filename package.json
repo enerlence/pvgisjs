@@ -3,7 +3,10 @@
   "version": "1.0.0",
   "main": "index.js",
   "repository": "https://github.com/enerlence/pvgisjs.git",
-  "author": "psanchez <psanchez@soincon.esm>",
+  "author": "psanchez <pablo.sanchez@enerlence.es>",
+  "files": [
+    "lib/**/*"
+  ],
   "license": "MIT",
   "devDependencies": {
     "prettier": "^2.3.2",
@@ -12,6 +15,9 @@
     "typescript": "^4.3.4"
   },
   "scripts": {
-    "build": "tsc"
+    "build": "tsc",
+    "format": "prettier --write \"src/**/*.ts\" \"lib/**/*.js\"",
+    "lint": "tslint -p tsconfig.json 'src/**/*.ts?(x)'",
+    "watch": "tsc -w"
   }
 }
