@@ -18,6 +18,7 @@
     "typescript": "^4.3.4"
   },
   "scripts": {
+    "test": "jest --config jestconfig.json",
     "build": "tsc",
     "format": "prettier --write \"src/**/*.ts\" \"lib/**/*.js\"",
     "lint": "tslint -p tsconfig.json 'src/**/*.ts?(x)'",
