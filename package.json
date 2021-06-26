@@ -1,5 +1,5 @@
 {
-  "name": "pvgisjs",
+  "name": "@enerlence/pvgisjs",
   "version": "1.0.1",
   "description": "Easily interact with PVGis API with typed responses and request building functionalities",
   "main": "lib/index.js",
