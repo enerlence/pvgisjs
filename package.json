@@ -16,6 +16,7 @@
   ],
   "license": "MIT",
   "devDependencies": {
+    "@types/isomorphic-fetch": "^0.0.35",
     "@types/jest": "^26.0.23",
     "jest": "^27.0.5",
     "prettier": "^2.3.2",
@@ -35,5 +36,8 @@
     "preversion": "yarn lint",
     "version": "yarn format && git add -A src",
     "postversion": "git push && git push --tags"
+  },
+  "dependencies": {
+    "isomorphic-fetch": "^3.0.0"
   }
 }
