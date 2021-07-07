@@ -6,26 +6,26 @@ export type CacheHandlerOptions = {
 
 export class CacheHandler {
   constructor(options?: CacheHandlerOptions) {
-    //initialize cache
+    // initialize cache
     this.cache = new Map<string, string>();
     this.size = 0;
     this.keys = [];
-    //cache options
+    // cache options
     if (options) {
       this.maxSizeCache = options.maxSizeCache || 104857600;
     }
   }
 
-  //max size of the cache in B, default to 100MB
+  // max size of the cache in B, default to 100MB
   private maxSizeCache = 104857600;
 
-  //cache map
+  // cache map
   private cache: Map<string, string>;
 
-  //cache map size in b
+  // cache map size in b
   private size: number;
 
-  //cache map size in b
+  // cache map size in b
   private keys: string[];
 
   getItemSize(item: string): number {
@@ -42,17 +42,17 @@ export class CacheHandler {
     }
   }
 
-  //set new cache entry
+  // set new cache entry
   setItem(queryKey: string, value: string): void {
-    //check size of the cache
+    // check size of the cache
     const itemSize = this.getItemSize(value);
-    //check if inserted item is greater than max cache size
+    // check if inserted item is greater than max cache size
     if (itemSize <= this.maxSizeCache) {
       if (this.size + itemSize > this.maxSizeCache) {
-        //clear needed space
+        // clear needed space
         this.clearCacheSpace(itemSize);
       }
-      //finally set item data on map
+      // finally set item data on map
       this.cache.set(queryKey, value);
       this.keys.push(queryKey);
       this.size += itemSize;

@@ -1,3 +1,4 @@
+/* tslint:disable:no-unused-expression */
 import {
   HourlyPVGISJSONOutput,
   PVGISJSONResponse,
@@ -14,7 +15,7 @@ export interface PVGisCunstructorOptions {
   pvgisEndPoint?: string;
   enableCache: boolean;
 }
-//TODO: Make test for params error
+// TODO: Make test for params error
 export class PVGISClient {
   constructor(options?: PVGisCunstructorOptions) {
     if (options) {
@@ -23,20 +24,20 @@ export class PVGISClient {
     this.initializeCache();
   }
 
-  private pvgisEndPoint: string = 'https://re.jrc.ec.europa.eu/api';
-  //internal identifier of pvgis client
+  private pvgisEndPoint: string = 'https:// re.jrc.ec.europa.eu/api';
+  // internal identifier of pvgis client
   readonly clientUUID = createUUID();
-  //sets pvgis end point by the constructor
+  // sets pvgis end point by the constructor
   private setpvgisEndPoint(pvgisEndPoint: string) {
     this.pvgisEndPoint = pvgisEndPoint;
   }
 
   private cache?: CacheHandler;
   /******************* 
-  //TOOLS REQUEST METHODS
+  // TOOLS REQUEST METHODS
   ******************* */
 
-  //HOURLY RADIATION TOOL
+  // HOURLY RADIATION TOOL
   /**
    * Executes series calc PVGis tool request and calls callBackFn with response
    * @param params Request configuration parameters
@@ -70,28 +71,28 @@ export class PVGISClient {
     params: SeriesCalcParams,
     param1?: any,
   ): Promise<PVGISJSONResponse | undefined | void | { data: PVGISJSONResponse | undefined; url: string }> {
-    //process params
-    //default response format is json
+    // process params
+    // default response format is json
     params = {
       outputformat: 'json',
       ...params,
     };
-    //check requested request params
+    // check requested request params
     if (checkRequestParams(params)) {
       throw new Error('Incorrect requested params ');
     }
-    //transform boolean params ti integer (0 ir 1)
+    // transform boolean params ti integer (0 ir 1)
     const transformedParams = transformBooleanParamsToIntCode(params);
-    //compound the path based on parameters
+    // compound the path based on parameters
     const queryPath = buildPath(transformedParams);
     if (queryPath) {
-      //construct the base uri based on tool
+      // construct the base uri based on tool
       const url = this.pvgisEndPoint + '/' + PVGISTools.seriescalc + queryPath;
-      //fetch data (checking cache)
+      // fetch data (checking cache)
       const seriesCalcResponse = this.cache?.getItem(url)
         ? this.cache?.getItem<PVGISJSONResponse>(url)!
         : await fetchJson<PVGISJSONResponse | undefined>(HTTPMethod.GET, url);
-      //store in cache
+      // store in cache
       this.cache && this.cache.setItem(url, JSON.stringify(seriesCalcResponse));
 
       if (param1?.returnUrl) {
@@ -120,30 +121,30 @@ export class PVGISClient {
    * and returns only that information
    */
   async calculateOptimalAngles(params: SeriesCalcParams): Promise<{ azimuth: number; slope: number } | undefined> {
-    //process params
-    //default response format is json
+    // process params
+    // default response format is json
     params = {
       outputformat: 'json',
       ...params,
       optimalangles: true,
       optimalinclination: true,
     };
-    //check requested request params
+    // check requested request params
     if (checkRequestParams(params)) {
       throw new Error('Incorrect requested params');
     }
 
-    //transform boolean params ti integer (0 ir 1)
+    // transform boolean params ti integer (0 ir 1)
     const transformedParams = transformBooleanParamsToIntCode(params);
     const queryPath = buildPath(transformedParams);
     if (queryPath) {
-      //construct the base uri based on tool
+      // construct the base uri based on tool
       const url = this.pvgisEndPoint + '/' + PVGISTools.seriescalc + queryPath;
 
       const seriesCalcResponse = this.cache?.getItem<PVGISJSONResponse>(url)
         ? this.cache?.getItem<PVGISJSONResponse>(url)
         : await fetchJson<PVGISJSONResponse | undefined>(HTTPMethod.GET, url);
-      //store in cache
+      // store in cache
       this.cache && this.cache.setItem(url, JSON.stringify(seriesCalcResponse));
       if (seriesCalcResponse?.inputs?.mounting_system?.fixed) {
         const { azimuth, slope } = seriesCalcResponse.inputs.mounting_system.fixed;
@@ -176,7 +177,7 @@ function transformBooleanParamsToIntCode(params: SeriesCalcParams): SeriesCalcPa
       'optimalangles',
       'components',
     ];
-    //transform those parameters from boolean to int
+    // transform those parameters from boolean to int
     const booleanToInt = (bool: boolean) => (bool ? 1 : 0);
     BOOLEAN_PARAMETERS.forEach((b) => {
       (addaptedParams as any)[b] = booleanToInt(params[b] as any);

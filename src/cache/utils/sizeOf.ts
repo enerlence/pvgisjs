@@ -12,11 +12,13 @@ const ECMA_SIZES = {
 
 function allProperties(obj: any) {
   const stringProperties = [];
-  for (var prop in obj) {
-    stringProperties.push(prop);
+  for (const prop in obj) {
+    if (obj.formErrors.hasOwnProperty(prop)) {
+      stringProperties.push(prop);
+    }
   }
   if (Object.getOwnPropertySymbols) {
-    var symbolProperties = Object.getOwnPropertySymbols(obj);
+    const symbolProperties = Object.getOwnPropertySymbols(obj);
     Array.prototype.push.apply(stringProperties, symbolProperties);
   }
   return stringProperties;
@@ -27,10 +29,9 @@ function sizeOfObject(seen: any, object: any) {
     return 0;
   }
 
-  var bytes = 0;
-  var properties = allProperties(object);
-  for (var i = 0; i < properties.length; i++) {
-    var key = properties[i];
+  let bytes = 0;
+  const properties = allProperties(object);
+  for (const key of properties) {
     // Do not recalculate circular references
     if (typeof object[key] === 'object' && object[key] !== null) {
       if (seen.has(object[key])) {
@@ -60,7 +61,7 @@ function getCalculator(seen: any) {
       return object.length;
     }
 
-    var objectType = typeof object;
+    const objectType = typeof object;
     switch (objectType) {
       case 'string':
         return object.length * ECMA_SIZES.STRING;
@@ -75,6 +76,7 @@ function getCalculator(seen: any) {
           : (object.toString().length - 8) * ECMA_SIZES.STRING;
       case 'object':
         if (Array.isArray(object)) {
+          /* tslint:disable:only-arrow-functions */
           return object.map(getCalculator(seen)).reduce(function (acc, curr) {
             return acc + curr;
           }, 0);

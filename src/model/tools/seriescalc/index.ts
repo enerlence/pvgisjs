@@ -11,7 +11,7 @@ export interface PVGISJSONResponse {
 }
 export type PVGISMagnitude = 'P' | 'G(i)' | 'H_sun' | 'T2m' | 'WS10m' | 'Int';
 export interface HourlyPVGISJSONOutput extends Record<PVGISMagnitude, number> {
-  time: string; //Format example "20160101:0010"
+  time: string; // Format example "20160101:0010"
   P: number;
   'G(i)': number;
   H_sun: number;
@@ -160,54 +160,54 @@ export type MetadataPVGISJSONOutput = {
   };
 };
 
-//defines options for the methos seriesCalc of PVGISClient
+// defines options for the methos seriesCalc of PVGISClient
 export type SeriesCalcOptions = {
   raw?: boolean;
 };
-//Defines the PVGIS query parameters available for the series calc request
+// Defines the PVGIS query parameters available for the series calc request
 export type SeriesCalcParams = {
-  //Latitude, in decimal degrees, south is negative.
+  // Latitude, in decimal degrees, south is negative.
   lat: number;
-  //Longitude, in decimal degrees, west is negative.
+  // Longitude, in decimal degrees, west is negative.
   lon: number;
-  //Calculate taking into account shadows from high horizon. Value of 1 for "yes".
+  // Calculate taking into account shadows from high horizon. Value of 1 for "yes".
   usehorizon?: boolean;
-  //Name of the radiation database (DB):
+  // Name of the radiation database (DB):
   raddatabase?: PVGISRadiationDatabase;
-  //TODO: Add temporal covergae based on databases (https://ec.europa.eu/jrc/en/PVGIS/docs/usermanual#tab:db-years)
-  //First year of the output of hourly averages.
+  // TODO: Add temporal covergae based on databases (https:// ec.europa.eu/jrc/en/PVGIS/docs/usermanual#tab:db-years)
+  // First year of the output of hourly averages.
   startyear?: number;
-  //Final year of the output of hourly averages.
+  // Final year of the output of hourly averages.
   endyear?: number;
-  //TODO: parse to "1" or "0" when constructing path
+  // TODO: parse to "1" or "0" when constructing path
   pvcalculation?: boolean;
-  //TODO: Check existance if pvcalculation is true
-  //Nominal power of the PV system, in kW.
+  // TODO: Check existance if pvcalculation is true
+  // Nominal power of the PV system, in kW.
   peakpower?: number;
-  //PV technology. Choices are: "crystSi", "CIS", "CdTe" and "Unknown".
+  // PV technology. Choices are: "crystSi", "CIS", "CdTe" and "Unknown".
   pvtechchoice?: PVGISPVTechnologies;
   mountingplace?: 'free' | 'free-standing' | undefined;
-  //TODO: Check existance if pvcalculation is true
-  //Sum of system losses, in percent.
+  // TODO: Check existance if pvcalculation is true
+  // Sum of system losses, in percent.
   loss?: number;
-  //Type of suntracking used
+  // Type of suntracking used
   trackingtype?: PVGISTrackingTypes;
-  //Inclination angle from horizontal plane. Not relevant for 2-axis tracking.
+  // Inclination angle from horizontal plane. Not relevant for 2-axis tracking.
   angle?: number;
-  //Orientation (azimuth) angle of the (fixed) plane, 0=south, 90=west, -90=east. Not relevant for tracking planes.
+  // Orientation (azimuth) angle of the (fixed) plane, 0=south, 90=west, -90=east. Not relevant for tracking planes.
   aspect?: number;
-  //TODO: parse to "1" or "0" when constructing path
-  //Calculate the optimum inclination angle
+  // TODO: parse to "1" or "0" when constructing path
+  // Calculate the optimum inclination angle
   optimalinclination?: boolean;
-  //TODO: parse to "1" or "0" when constructing path
-  //Calculate the optimum inclination AND orientation angles.
+  // TODO: parse to "1" or "0" when constructing path
+  // Calculate the optimum inclination AND orientation angles.
   optimalangles?: boolean;
-  //If true outputs beam, diffuse and reflected radiation components. Otherwise, it outputs only global values.
-  //TODO: parse to "1" or "0" when constructing path
+  // If true outputs beam, diffuse and reflected radiation components. Otherwise, it outputs only global values.
+  // TODO: parse to "1" or "0" when constructing path
   components?: boolean;
-  //default 'json'
+  // default 'json'
   outputformat?: 'csv' | 'basic' | 'json';
-  //Use this with a value of true if you access the web service from a web browser and want to save the data to a file.
+  // Use this with a value of true if you access the web service from a web browser and want to save the data to a file.
   browser?: boolean;
 };
 
