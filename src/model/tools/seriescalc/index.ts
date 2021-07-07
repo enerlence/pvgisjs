@@ -171,7 +171,6 @@ export type SeriesCalcParams = {
   //Longitude, in decimal degrees, west is negative.
   lon: number;
   //Calculate taking into account shadows from high horizon. Value of 1 for "yes".
-  //TODO: parse to "1" or "0" when constructing path
   usehorizon?: boolean;
   //Name of the radiation database (DB):
   raddatabase?: PVGISRadiationDatabase;
@@ -181,7 +180,6 @@ export type SeriesCalcParams = {
   //Final year of the output of hourly averages.
   endyear?: number;
   //TODO: parse to "1" or "0" when constructing path
-  //If false outputs only solar radiation calculations, if true outputs the estimation of hourly PV production as well.
   pvcalculation?: boolean;
   //TODO: Check existance if pvcalculation is true
   //Nominal power of the PV system, in kW.
@@ -212,3 +210,22 @@ export type SeriesCalcParams = {
   //Use this with a value of true if you access the web service from a web browser and want to save the data to a file.
   browser?: boolean;
 };
+
+/**
+ * Interface like SeriesCalcParams with int value on boolean parameters
+ */
+type booleanSeriesCalcParametrs =
+  | 'usehorizon'
+  | 'pvcalculation'
+  | 'optimalinclination'
+  | 'optimalangles'
+  | 'components';
+
+interface SeriesCalcParamsAddaptedI extends Omit<SeriesCalcParams, booleanSeriesCalcParametrs> {
+  optimalangles?: number;
+  usehorizon?: number;
+  optimalinclination?: number;
+  components?: number;
+  pvcalculation?: number;
+}
+export type SeriesCalcParamsAddapted = SeriesCalcParamsAddaptedI & Record<string, any>;
