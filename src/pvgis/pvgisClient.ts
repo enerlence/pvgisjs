@@ -24,7 +24,7 @@ export class PVGISClient {
     this.initializeCache();
   }
 
-  private pvgisEndPoint: string = 'https:// re.jrc.ec.europa.eu/api';
+  private pvgisEndPoint: string = 'https://re.jrc.ec.europa.eu/api';
   // internal identifier of pvgis client
   readonly clientUUID = createUUID();
   // sets pvgis end point by the constructor

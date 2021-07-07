@@ -2,8 +2,6 @@ import fetch from 'isomorphic-fetch';
 
 export async function fetchJson<T>(method: HTTPMethod, url: string, body = null, options: any = {}) {
   const { headers = {}, ...optionsRest } = options;
-  url = new URL(url, '').toString();
-
   try {
     const result = await fetch(url, {
       method,
