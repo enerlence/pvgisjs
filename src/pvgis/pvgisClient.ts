@@ -219,7 +219,7 @@ export class PVGISClient {
       if (seriesCalcResponse?.inputs?.mounting_system?.fixed) {
         const { azimuth, slope } = seriesCalcResponse.inputs.mounting_system.fixed;
 
-        return { azimuth: parseInt(azimuth.value, 10), slope: parseInt(slope.value, 10) };
+        return { azimuth: azimuth.value, slope: slope.value };
       }
     }
   }
