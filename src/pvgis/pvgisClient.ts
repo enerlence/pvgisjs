@@ -1,12 +1,18 @@
 /* tslint:disable:no-unused-expression */
 import {
   HourlyPVGISJSONOutput,
-  PVGISJSONResponse,
+  PVGISJSONSeriesCalcResponse,
   SeriesCalcOptions,
   SeriesCalcParams,
   SeriesCalcParamsAddapted,
 } from '..';
 import { CacheHandler } from '../cache/cacheHandler';
+import {
+  booleanPVCalcParametrs,
+  PVCalcParams,
+  PVCalcParamsAddapted,
+  PVGISJSONPVCalcResponse,
+} from '../model/tools/PVcalc';
 import { PVGISTools } from '../model/tools/pvgisTools';
 import { buildPath, createUUID } from '../utils';
 import { fetchJson, HTTPMethod } from '../utils/fetch';
@@ -15,7 +21,6 @@ export interface PVGisCunstructorOptions {
   pvgisEndPoint?: string;
   enableCache: boolean;
 }
-// TODO: Make test for params error
 export class PVGISClient {
   constructor(options?: PVGisCunstructorOptions) {
     if (options) {
@@ -53,9 +58,9 @@ export class PVGISClient {
    * @async
    * @param params Request configuration parameters
    * @param callBackFn function to be executed when response is recieved
-   * @return {Promise<PVGISJSONResponse>} PVGis seriescalc tool response
+   * @return {Promise<PVGISJSONSeriesCalcResponse>} PVGis seriescalc tool response
    */
-  async seriesCalc(params: SeriesCalcParams): Promise<PVGISJSONResponse | undefined>;
+  async seriesCalc(params: SeriesCalcParams): Promise<PVGISJSONSeriesCalcResponse | undefined>;
   /**
    * Executes series calc PVGis tool request and return an object with request url and response
    * @async
@@ -66,11 +71,13 @@ export class PVGISClient {
   async seriesCalc(
     params: SeriesCalcParams,
     options: { returnUrl: boolean },
-  ): Promise<{ data: PVGISJSONResponse | undefined; url: string } | undefined>;
+  ): Promise<{ data: PVGISJSONSeriesCalcResponse | undefined; url: string } | undefined>;
   async seriesCalc(
     params: SeriesCalcParams,
     param1?: any,
-  ): Promise<PVGISJSONResponse | undefined | void | { data: PVGISJSONResponse | undefined; url: string }> {
+  ): Promise<
+    PVGISJSONSeriesCalcResponse | undefined | void | { data: PVGISJSONSeriesCalcResponse | undefined; url: string }
+  > {
     // process params
     // default response format is json
     params = {
@@ -78,11 +85,11 @@ export class PVGISClient {
       ...params,
     };
     // check requested request params
-    if (checkRequestParams(params)) {
+    if (checkRequestSeriesCalcParams(params)) {
       throw new Error('Incorrect requested params ');
     }
     // transform boolean params ti integer (0 ir 1)
-    const transformedParams = transformBooleanParamsToIntCode(params);
+    const transformedParams = transformBooleanSeriesCalcParamsToIntCode(params);
     // compound the path based on parameters
     const queryPath = buildPath(transformedParams);
     if (queryPath) {
@@ -90,8 +97,8 @@ export class PVGISClient {
       const url = this.pvgisEndPoint + '/' + PVGISTools.seriescalc + queryPath;
       // fetch data (checking cache)
       const seriesCalcResponse = this.cache?.getItem(url)
-        ? this.cache?.getItem<PVGISJSONResponse>(url)!
-        : await fetchJson<PVGISJSONResponse | undefined>(HTTPMethod.GET, url);
+        ? this.cache?.getItem<PVGISJSONSeriesCalcResponse>(url)!
+        : await fetchJson<PVGISJSONSeriesCalcResponse | undefined>(HTTPMethod.GET, url);
       // store in cache
       this.cache && this.cache.setItem(url, JSON.stringify(seriesCalcResponse));
 
@@ -106,6 +113,69 @@ export class PVGISClient {
         return;
       }
       return seriesCalcResponse;
+    }
+  }
+
+  // PV CALC TOOL:
+
+  /**
+   * Executes pv calc PVGis tool request and return response
+   * @async
+   * @param params Request configuration parameters
+   * @param callBackFn function to be executed when response is recieved
+   * @return {Promise<PVGISJSONSeriesCalcResponse>} PVGis seriescalc tool response
+   */
+  async pvCalc(params: PVCalcParams): Promise<PVGISJSONPVCalcResponse | undefined>;
+  /**
+   * Executes pv calc PVGis tool request and return an object with request url and response
+   * @async
+   * @param params Request configuration parameters
+   * @param callBackFn function to be executed when response is recieved
+   * @return {Promise<Object>} PVGis seriescalc tool response
+   */
+  async pvCalc(
+    params: PVCalcParams,
+    options: { returnUrl: boolean },
+  ): Promise<{ data: PVGISJSONPVCalcResponse | undefined; url: string } | undefined>;
+  async pvCalc(
+    params: PVCalcParams,
+    param1?: any,
+  ): Promise<PVGISJSONPVCalcResponse | undefined | void | { data: PVGISJSONPVCalcResponse | undefined; url: string }> {
+    // process params
+    // default response format is json
+    params = {
+      outputformat: 'json',
+      ...params,
+    };
+    // check requested request params
+    if (checkRequestPVCalcParams(params)) {
+      throw new Error('Incorrect requested params ');
+    }
+    // transform boolean params ti integer (0 ir 1)
+    const transformedParams = transformBooleanPVCalcParamsToIntCode(params);
+    // compound the path based on parameters
+    const queryPath = buildPath(transformedParams);
+    if (queryPath) {
+      // construct the base uri based on tool
+      const url = this.pvgisEndPoint + '/' + PVGISTools.PVcalc + queryPath;
+      // fetch data (checking cache)
+      const pvCalcResponse = this.cache?.getItem(url)
+        ? this.cache?.getItem<PVGISJSONPVCalcResponse>(url)!
+        : await fetchJson<PVGISJSONPVCalcResponse | undefined>(HTTPMethod.GET, url);
+      // store in cache
+      this.cache && this.cache.setItem(url, JSON.stringify(pvCalcResponse));
+
+      if (param1?.returnUrl) {
+        return {
+          data: pvCalcResponse,
+          url,
+        };
+      }
+      if (typeof param1 === 'function') {
+        param1(pvCalcResponse?.outputs);
+        return;
+      }
+      return pvCalcResponse;
     }
   }
 
@@ -130,35 +200,63 @@ export class PVGISClient {
       optimalinclination: true,
     };
     // check requested request params
-    if (checkRequestParams(params)) {
+    if (checkRequestSeriesCalcParams(params)) {
       throw new Error('Incorrect requested params');
     }
 
     // transform boolean params ti integer (0 ir 1)
-    const transformedParams = transformBooleanParamsToIntCode(params);
+    const transformedParams = transformBooleanSeriesCalcParamsToIntCode(params);
     const queryPath = buildPath(transformedParams);
     if (queryPath) {
       // construct the base uri based on tool
       const url = this.pvgisEndPoint + '/' + PVGISTools.seriescalc + queryPath;
 
-      const seriesCalcResponse = this.cache?.getItem<PVGISJSONResponse>(url)
-        ? this.cache?.getItem<PVGISJSONResponse>(url)
-        : await fetchJson<PVGISJSONResponse | undefined>(HTTPMethod.GET, url);
+      const seriesCalcResponse = this.cache?.getItem<PVGISJSONSeriesCalcResponse>(url)
+        ? this.cache?.getItem<PVGISJSONSeriesCalcResponse>(url)
+        : await fetchJson<PVGISJSONSeriesCalcResponse | undefined>(HTTPMethod.GET, url);
       // store in cache
       this.cache && this.cache.setItem(url, JSON.stringify(seriesCalcResponse));
       if (seriesCalcResponse?.inputs?.mounting_system?.fixed) {
         const { azimuth, slope } = seriesCalcResponse.inputs.mounting_system.fixed;
 
-        return { azimuth: azimuth.value, slope: slope.value };
+        return { azimuth: parseInt(azimuth.value, 10), slope: parseInt(slope.value, 10) };
       }
     }
   }
-}
 
-function checkRequestParams(params: SeriesCalcParams) {
+  clearCache() {
+    this.cache && this.cache.clear();
+  }
+}
+/**
+ * Check that mandatory parameters of series calc method are present and correctly defined
+ * @param params
+ * @returns
+ */
+function checkRequestSeriesCalcParams(params: SeriesCalcParams) {
   const { lat, lon } = params;
 
   if (!lat || !lon || typeof lat !== 'number' || typeof lon !== 'number') return false;
+}
+/**
+ * Check that mandatory parameters of pv calc method are present and correctly defined
+ * @param params
+ * @returns
+ */
+function checkRequestPVCalcParams(params: PVCalcParams) {
+  const { lat, lon, peakpower, loss } = params;
+
+  if (
+    !lat ||
+    !lon ||
+    typeof lat !== 'number' ||
+    typeof lon !== 'number' ||
+    !peakpower ||
+    typeof peakpower !== 'number' ||
+    !loss ||
+    typeof loss !== 'number'
+  )
+    return false;
 }
 
 /**
@@ -166,7 +264,7 @@ function checkRequestParams(params: SeriesCalcParams) {
  * @param params
  */
 
-function transformBooleanParamsToIntCode(params: SeriesCalcParams): SeriesCalcParamsAddapted {
+function transformBooleanSeriesCalcParamsToIntCode(params: SeriesCalcParams): SeriesCalcParamsAddapted {
   const addaptedParams: SeriesCalcParamsAddapted = { ...params } as unknown as SeriesCalcParamsAddapted;
 
   try {
@@ -176,6 +274,33 @@ function transformBooleanParamsToIntCode(params: SeriesCalcParams): SeriesCalcPa
       'optimalinclination',
       'optimalangles',
       'components',
+    ];
+    // transform those parameters from boolean to int
+    const booleanToInt = (bool: boolean) => (bool ? 1 : 0);
+    BOOLEAN_PARAMETERS.forEach((b) => {
+      (addaptedParams as any)[b] = booleanToInt(params[b] as any);
+    });
+    return addaptedParams;
+  } catch (_) {
+    return addaptedParams;
+  }
+}
+
+function transformBooleanPVCalcParamsToIntCode(params: PVCalcParams): PVCalcParamsAddapted {
+  const addaptedParams: PVCalcParamsAddapted = { ...params } as unknown as PVCalcParamsAddapted;
+
+  try {
+    const BOOLEAN_PARAMETERS: booleanPVCalcParametrs[] = [
+      'browser',
+      'inclined_axis',
+      'inclined_optimum',
+      'optimalangles',
+      'optimalinclination',
+      'pvprice',
+      'twoaxis',
+      'usehorizon',
+      'vertical_axis',
+      'vertical_optimum',
     ];
     // transform those parameters from boolean to int
     const booleanToInt = (bool: boolean) => (bool ? 1 : 0);

@@ -2,12 +2,12 @@ import { PVGISRadiationDatabase } from '../../pvgisRadiationDatabases';
 import { PVGISPVTechnologies } from '../../pvgisTechnologies';
 import { PVGISTrackingTypes } from '../../pvgisTrackingTypes';
 
-export interface PVGISJSONResponse {
+export interface PVGISJSONSeriesCalcResponse {
   inputs: InputsPVGISJSONOutput;
   outputs: {
     hourly: HourlyPVGISJSONOutput[];
   };
-  meta: MetadataPVGISJSONOutput;
+  meta: MetadataPVGISJSONSeriesCalcOutput;
 }
 export type PVGISMagnitude = 'P' | 'G(i)' | 'H_sun' | 'T2m' | 'WS10m' | 'Int';
 export interface HourlyPVGISJSONOutput extends Record<PVGISMagnitude, number> {
@@ -19,6 +19,8 @@ export interface HourlyPVGISJSONOutput extends Record<PVGISMagnitude, number> {
   WS10m: number;
   Int: number;
 }
+
+export type MonutingSystemsTypes = 'fixed' | 'inclined_axis' | 'two_axis' | 'vertical_axis';
 export type InputsPVGISJSONOutput = {
   location: {
     latitude: number;
@@ -35,7 +37,7 @@ export type InputsPVGISJSONOutput = {
     horizon_data: string;
   };
   mounting_system: {
-    fixed: {
+    [key in MonutingSystemsTypes]: {
       slope: {
         value: number;
         optimal: boolean;
@@ -54,7 +56,7 @@ export type InputsPVGISJSONOutput = {
   };
 };
 
-export type MetadataPVGISJSONOutput = {
+export type MetadataPVGISJSONSeriesCalcOutput = {
   inputs: {
     location: {
       description: string;
@@ -179,15 +181,12 @@ export type SeriesCalcParams = {
   startyear?: number;
   // Final year of the output of hourly averages.
   endyear?: number;
-  // TODO: parse to "1" or "0" when constructing path
   pvcalculation?: boolean;
-  // TODO: Check existance if pvcalculation is true
   // Nominal power of the PV system, in kW.
   peakpower?: number;
   // PV technology. Choices are: "crystSi", "CIS", "CdTe" and "Unknown".
   pvtechchoice?: PVGISPVTechnologies;
   mountingplace?: 'free' | 'free-standing' | undefined;
-  // TODO: Check existance if pvcalculation is true
   // Sum of system losses, in percent.
   loss?: number;
   // Type of suntracking used
@@ -196,14 +195,11 @@ export type SeriesCalcParams = {
   angle?: number;
   // Orientation (azimuth) angle of the (fixed) plane, 0=south, 90=west, -90=east. Not relevant for tracking planes.
   aspect?: number;
-  // TODO: parse to "1" or "0" when constructing path
   // Calculate the optimum inclination angle
   optimalinclination?: boolean;
-  // TODO: parse to "1" or "0" when constructing path
   // Calculate the optimum inclination AND orientation angles.
   optimalangles?: boolean;
   // If true outputs beam, diffuse and reflected radiation components. Otherwise, it outputs only global values.
-  // TODO: parse to "1" or "0" when constructing path
   components?: boolean;
   // default 'json'
   outputformat?: 'csv' | 'basic' | 'json';
