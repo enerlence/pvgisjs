@@ -1,6 +1,7 @@
 import { sizeof } from './utils/sizeOf';
 
 export type CacheHandlerOptions = {
+  // max cache size in bytes (default 100MB)
   maxSizeCache?: number;
 };
 
@@ -33,12 +34,16 @@ export class CacheHandler {
   }
 
   clearCacheSpace(requiredSpace: number) {
-    while (this.maxSizeCache - this.size < requiredSpace || this.cache.size === 0) {
-      const entries = this.cache.entries();
-      const sizeOfDeletedItem = this.getItemSize(entries.next().value[0]);
-      this.cache.delete(entries.next().value[0]);
-      this.keys = this.keys.filter((k) => k !== entries.next().value[0]);
-      this.size -= sizeOfDeletedItem;
+    const entries = this.cache.entries();
+
+    while (this.maxSizeCache - this.size >= requiredSpace || this.cache.size <= 0) {
+      const currentEntry = entries.next();
+      if (currentEntry.value?.length) {
+        const sizeOfDeletedItem = this.getItemSize(currentEntry.value[0]);
+        this.cache.delete(currentEntry?.value[0]);
+        this.keys = this.keys?.filter((k) => k !== currentEntry.value[0]);
+        this.size = this.size - sizeOfDeletedItem >= 0 ? this.size - sizeOfDeletedItem : 0;
+      }
     }
   }
 

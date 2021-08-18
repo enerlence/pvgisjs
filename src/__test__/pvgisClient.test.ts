@@ -5,6 +5,13 @@ describe('PVGISClient Tests', () => {
 
     expect(pvgisClient.clientUUID).toBeDefined();
   });
+  test('It constructs correctly with options', () => {
+    const pvgisClient = new PVGISClient({
+      enableCache: false,
+    });
+
+    expect(pvgisClient.cache).toBeUndefined();
+  });
 
   test('Executes series calc correctly', async () => {
     const pvgisClient = new PVGISClient();

@@ -19,14 +19,16 @@ import { fetchJson, HTTPMethod } from '../utils/fetch';
 
 export interface PVGisCunstructorOptions {
   pvgisEndPoint?: string;
-  enableCache: boolean;
+  enableCache?: boolean;
 }
 export class PVGISClient {
   constructor(options?: PVGisCunstructorOptions) {
     if (options) {
       options.pvgisEndPoint && this.setpvgisEndPoint(options.pvgisEndPoint);
     }
-    this.initializeCache();
+    if (options?.enableCache === true || options?.enableCache === undefined) {
+      this.initializeCache();
+    }
   }
 
   private pvgisEndPoint: string = 'https://re.jrc.ec.europa.eu/api';
@@ -37,7 +39,7 @@ export class PVGISClient {
     this.pvgisEndPoint = pvgisEndPoint;
   }
 
-  private cache?: CacheHandler;
+  cache?: CacheHandler;
   /******************* 
   // TOOLS REQUEST METHODS
   ******************* */
