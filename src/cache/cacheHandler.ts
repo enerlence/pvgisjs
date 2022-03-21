@@ -33,15 +33,26 @@ export class CacheHandler {
     return sizeof(item);
   }
 
+  getSize(): number {
+    return this.size;
+  }
+
+  getMaxSize(): number {
+    return this.maxSizeCache;
+  }
+
   clearCacheSpace(requiredSpace: number) {
     const entries = this.cache.entries();
 
-    while (this.maxSizeCache - this.size >= requiredSpace || this.cache.size <= 0) {
-      const currentEntry = entries.next();
+    /* Checking if the cache element size is greater than 0 and if the size of the cache + the required space is
+greater than the max cache size. */
+    while (this.size + requiredSpace >= this.maxSizeCache && this.cache.size >= 0) {
+      let currentEntry = entries.next();
+
       if (currentEntry.value?.length) {
-        const sizeOfDeletedItem = this.getItemSize(currentEntry.value[0]);
-        this.cache.delete(currentEntry?.value[0]);
-        this.keys = this.keys?.filter((k) => k !== currentEntry.value[0]);
+        const sizeOfDeletedItem = this.getItemSize(currentEntry.value);
+        this.cache.delete(currentEntry?.value);
+        this.keys = this.keys?.filter((k) => k !== currentEntry.value);
         this.size = this.size - sizeOfDeletedItem >= 0 ? this.size - sizeOfDeletedItem : 0;
       }
     }
