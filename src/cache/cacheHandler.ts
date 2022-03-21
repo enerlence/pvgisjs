@@ -47,7 +47,7 @@ export class CacheHandler {
     /* Checking if the cache element size is greater than 0 and if the size of the cache + the required space is
 greater than the max cache size. */
     while (this.size + requiredSpace >= this.maxSizeCache && this.cache.size >= 0) {
-      let currentEntry = entries.next();
+      const currentEntry = entries.next();
 
       if (currentEntry.value?.length) {
         const sizeOfDeletedItem = this.getItemSize(currentEntry.value);
