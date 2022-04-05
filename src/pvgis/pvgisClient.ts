@@ -72,7 +72,7 @@ export class PVGISClient {
    */
   async seriesCalc(
     params: SeriesCalcParams,
-    options: { returnUrl: boolean },
+    options: { returnUrl?: boolean; omitRequest?: boolean },
   ): Promise<{ data: PVGISJSONSeriesCalcResponse | undefined; url: string } | undefined>;
   async seriesCalc(
     params: SeriesCalcParams,
@@ -94,7 +94,7 @@ export class PVGISClient {
     const transformedParams = transformBooleanSeriesCalcParamsToIntCode(params);
     // compound the path based on parameters
     const queryPath = buildPath(transformedParams);
-    if (queryPath) {
+    if (queryPath && param1?.omitRequest !== true) {
       // construct the base uri based on tool
       const url = this.pvgisEndPoint + '/' + PVGISTools.seriescalc + queryPath;
       // fetch data (checking cache)
@@ -115,6 +115,8 @@ export class PVGISClient {
         return;
       }
       return seriesCalcResponse;
+    } else {
+      return { url: this.pvgisEndPoint + '/' + PVGISTools.seriescalc + queryPath, data: undefined };
     }
   }
 
