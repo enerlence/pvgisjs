@@ -17,21 +17,28 @@ import { PVGISTools } from '../model/tools/pvgisTools';
 import { buildPath, createUUID } from '../utils';
 import { fetchJson, HTTPMethod } from '../utils/fetch';
 
-export interface PVGisCunstructorOptions {
-  pvgisEndPoint?: string;
+const PVGIS_DEFAULT_ENDPOINT = 'https://re.jrc.ec.europa.eu/api';
+
+export interface PVGisConstructorOptions {
   enableCache?: boolean;
+  pvgisVersion?: 'v5_1' | 'v5_2';
 }
 export class PVGISClient {
-  constructor(options?: PVGisCunstructorOptions) {
+  constructor(options?: PVGisConstructorOptions) {
     if (options) {
-      options.pvgisEndPoint && this.setpvgisEndPoint(options.pvgisEndPoint);
+      if (options.pvgisVersion) {
+        this.setpvgisEndPoint(PVGIS_DEFAULT_ENDPOINT + '/' + options.pvgisVersion);
+      } else {
+        this.setpvgisEndPoint(PVGIS_DEFAULT_ENDPOINT);
+      }
     }
     if (options?.enableCache === true || options?.enableCache === undefined) {
       this.initializeCache();
     }
   }
 
-  private pvgisEndPoint: string = 'https://re.jrc.ec.europa.eu/api';
+  private pvgisEndPoint: string = PVGIS_DEFAULT_ENDPOINT;
+
   // internal identifier of pvgis client
   readonly clientUUID = createUUID();
   // sets pvgis end point by the constructor
