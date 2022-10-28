@@ -1,6 +1,6 @@
 {
   "name": "@enerlence/pvgisjs",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "Easily interact with PVGis API with typed responses and request building functionalities",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
