@@ -16,7 +16,6 @@ describe('Cache handler test', () => {
 
       if (response) {
         cache.setItem(response.url, JSON.stringify(response.data));
-        console.log(cache?.getSize() + '/' + cache?.getMaxSize());
         //console.log(cache);
         expect(cache.getItem(response.url)).toBeDefined();
       } else {
@@ -34,12 +33,9 @@ describe('Cache handler test', () => {
       );
       if (response) {
         cache.setItem(response.url, JSON.stringify(response.data));
-        console.log(cache?.getSize() + '/' + cache?.getMaxSize());
         cache.setItem(response.url + '1', JSON.stringify(response.data));
-        console.log(cache?.getSize() + '/' + cache?.getMaxSize());
         cache.setItem(response.url + '2', JSON.stringify(response.data));
-        console.log(cache?.getSize() + '/' + cache?.getMaxSize());
-        //console.log(cache);
+
         expect(cache.getItem(response.url)).toBeDefined();
       } else {
         expect(response).toBeDefined();

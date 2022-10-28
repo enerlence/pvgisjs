@@ -51,8 +51,8 @@ describe('PVGISClient Tests', () => {
     const response1 = await pvgisClient.calculateOptimalAngles({ lat: 43.475324983359855, lon: -3.822893345487924 });
     const endTime2 = new Date().getTime();
 
-    console.log('first response', endTime1 - starttime1 + ' ms');
-    console.log('second response', endTime2 - starttime2 + ' ms');
+    //console.log('first response', endTime1 - starttime1 + ' ms');
+    //console.log('second response', endTime2 - starttime2 + ' ms');
     expect(endTime2 - starttime2).toBeLessThan(endTime1 - starttime1);
   }, 30000);
 });
