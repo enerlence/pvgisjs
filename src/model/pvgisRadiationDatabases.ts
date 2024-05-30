@@ -5,11 +5,11 @@
  *  based on the chosen location.
  */
 export declare enum PVGISRadiationDatabase {
-  PVGIS_SARAH = "PVGIS-SARAH",
-  PVGIS_SARAH2 = "PVGIS-SARAH2",
-  PVGIS_NSRDB = "PVGIS-NSRDB",
-  PVGIS_ERA5 = "PVGIS-ERA5",
-  //removed from PVGIS 5.2 as per their documentation
+  PVGIS_SARAH = 'PVGIS-SARAH',
+  PVGIS_SARAH2 = 'PVGIS-SARAH2',
+  PVGIS_NSRDB = 'PVGIS-NSRDB',
+  PVGIS_ERA5 = 'PVGIS-ERA5',
+  // removed from PVGIS 5.2 as per their documentation
   // PVGIS_COSMO = "PVGIS-COSMO",
   // PVGIS_CMSAF = "PVGIS-CMSAF"
 }
