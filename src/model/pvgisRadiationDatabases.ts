@@ -4,7 +4,7 @@
  * for Europe and Africa (will be deprecated).The default DBs are PVGIS-SARAH2, PVGIS-NSRDB and PVGIS-ERA5
  *  based on the chosen location.
  */
-export declare enum PVGISRadiationDatabase {
+export enum PVGISRadiationDatabase {
   PVGIS_SARAH = 'PVGIS-SARAH',
   PVGIS_SARAH2 = 'PVGIS-SARAH2',
   PVGIS_NSRDB = 'PVGIS-NSRDB',
